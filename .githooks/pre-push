@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+version=""
+result="UNDEFINED"
+semantic_version_identification() {
+    comment=$(git show -s --format=%s)
+    feature="FEATURE:|feature:|Feature:"
+    fix="FIX:|fix:|Fix:"
+    refactor="REFACTOR:|refactor:|Refactor:"
+    alpha="ALPHA:|alpha:|Alpha:"
+    beta="beta:|beta:|Beta:"
+    if [[ $comment =~ $feature ]]
+    then
+        result="FEATURE"
+    fi
+    if [[ $comment =~ $fix ]]
+    then
+        result="FIX"
+    fi
+    if [[ $comment =~ $refactor ]]
+    then
+        result="REFACTOR"
+    fi
+    if [[ $comment =~ $alpha ]]
+    then
+        result="ALPHA"
+    fi
+    if [[ $comment =~ $beta ]]
+    then
+        result="BETA"
+    fi
+
+    if [ $result != "UNDEFINED" ]
+    then
+        printf "\nVersion Comment word detected: %s", $result;
+        printf "\e[38;5;232m \e[48;5;240m\n";
+    else
+        printf "\e[38;5;232m \e[48;5;240m\n";
+        printf "\nVersion Comment Word not found...";
+    fi
+    return 0
+}
+
+update_version_node() {
+    if [ $result = "FEATURE" ]
+    then
+        version=$(npm version minor --no-git-tag-version)
+    fi
+    if [ $result = "FIX" ]
+    then
+        version=$(npm version patch --no-git-tag-version)
+    fi
+    if [ $result = "REFACTOR" ]
+    then
+        version=$(npm version major --no-git-tag-version)
+    fi
+    if [ $result = "ALPHA" ]
+    then
+        version=$(npm version prerelease --preid alpha --no-git-tag-version)
+    fi
+    if [ $result = "BETA" ]
+    then
+        version=$(npm version prerelease --preid beta --no-git-tag-version)
+    fi
+    if [ -z "$version" ]
+    then 
+        printf "\nVersion is not increment...\n";
+    else
+        git add package.json
+        git commit -am "update version to $version"
+    fi
+    return 0
+}
+
+defined_type="UNDEFINED"
+pjson=$(pwd)"/package.json"
+ppom=$(pwd)"/pom.xml"
+pgrad=$(pwd)"/build.gradle"
+if [ -e "$pjson" ]
+then
+    defined_type="NODE"
+else
+    if [ -e "$ppom" ]
+    then
+    defined_type="MAVEN"
+    fi
+
+    if [ -e "$ppom" ]
+    then
+    defined_type="GRADLE"
+    fi
+fi
+case $defined_type in
+    "NODE" ) #node
+        printf "\e[38;5;021m \e[48;5;051mIncremento de versión Node";
+        semantic_version_identification
+        update_version_node
+    ;;
+    "MAVEN" ) #maven
+        printf "\e[38;5;021m \e[48;5;051mIncremento de versión Maven";
+    ;;
+    "GRADLE" ) #gradle
+        printf "\e[38;5;021m \e[48;5;051mIncremento de versión Gradle";
+    ;;
+    "UNDEFINED" ) #no definido
+        printf "\e[38;5;132m \e[48;5;111mNo se arrancó ningun control de version";
+    ;;
+esac
