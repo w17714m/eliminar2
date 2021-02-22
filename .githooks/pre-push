@@ -92,15 +92,15 @@ else
 fi
 case $defined_type in
     "NODE" ) #node
-        printf "\e[38;5;021m \e[48;5;051mIncremento de versión Node";
+        printf "\e[38;5;021m \e[48;5;051mIncrement version Node";
         semantic_version_identification
         update_version_node
     ;;
     "MAVEN" ) #maven
-        printf "\e[38;5;021m \e[48;5;051mIncremento de versión Maven";
+        printf "\e[38;5;021m \e[48;5;051mIncrement version Maven";
     ;;
     "GRADLE" ) #gradle
-        printf "\e[38;5;021m \e[48;5;051mIncremento de versión Gradle";
+        printf "\e[38;5;021m \e[48;5;051mIncrement version Gradle";
     ;;
     "UNDEFINED" ) #no definido
         printf "\e[38;5;132m \e[48;5;111mNo se arrancó ningun control de version";
