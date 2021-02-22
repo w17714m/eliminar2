@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "hooks":"chmod +x config.sh && ./config.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
